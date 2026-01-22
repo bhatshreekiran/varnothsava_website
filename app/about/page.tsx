@@ -142,11 +142,10 @@ export default function AboutPage() {
               href="/events"
               className="inline-block group relative px-8 py-4 font-mono text-sm tracking-wider font-bold overflow-hidden"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative bg-black px-8 py-4 rounded-sm flex items-center justify-center gap-2 border border-emerald-500/50 group-hover:border-emerald-500 transition-colors">
-                EXPLORE EVENTS
-                <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>
-              </div>
+            <div className="relative bg-black px-8 py-4 rounded-sm flex items-center justify-center gap-2 border border-amber-500/50 group-hover:border-amber-500 transition-colors">
+              <span className="text-white font-mono tracking-widest">EXPLORE EVENTS</span>
+              <span className="text-xl text-amber-500 group-hover:translate-x-1 transition-transform">→</span>
+            </div>
             </Link>
           </section>
         </div>
