@@ -101,7 +101,7 @@ export default function Home() {
             className="group relative px-8 py-4 font-mono text-sm tracking-wider font-bold overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-orange-600 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative bg-black px-8 py-4 rounded-sm flex items-center justify-center gap-2 border border-amber-700/50 group-hover:border-amber-600 transition-colors">
+            <div className="relative bg-orange px-8 py-4 rounded-sm flex items-center justify-center gap-2 border border-amber-700/50 group-hover:border-amber-600 transition-colors">
               EXPLORE EVENTS
               <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>
             </div>
