@@ -154,7 +154,8 @@ export default function Home() {
             >
               [ GITHUB ]
             </Link>
-            <span className="text-amber-500 opacity-50">[ VARNOTHSAVA 2026 ]</span>
+            <span className="text-gray-600 hidden md:inline">|</span>
+            <span className="text-amber-500/70">[ CONTRIBUTED BY ROCKSTAR-2006 ]</span>
           </div>
         </div>
       </div>
