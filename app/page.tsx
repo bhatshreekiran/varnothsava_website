@@ -55,7 +55,7 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-amber-600 animate-pulse" />
             <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500 tracking-wider">
-              VARNOTH-GAVA
+              VARNOTH-SAVA
             </h1>
           </div>
           <div className="flex items-center gap-8">
@@ -144,7 +144,7 @@ export default function Home() {
           <div className="flex items-center gap-4 font-mono text-xs text-gray-500">
             <span>[ SYSTEM ONLINE ]</span>
             <span className="text-amber-600 animate-pulse">●</span>
-            <span>VARNOTH-GAVA 2026</span>
+            <span>VARNOTH-SAVA 2026</span>
           </div>
           <div className="flex items-center gap-6 text-xs text-gray-500 font-mono">
             <Link
@@ -155,7 +155,7 @@ export default function Home() {
               [ GITHUB ]
             </Link>
             <span className="text-gray-600 hidden md:inline">|</span>
-            <span className="text-amber-500/70">[ CONTRIBUTED BY ROCKSTAR-2006 ]</span>
+            <span className="text-amber-500/70">[ SHREEKIRAN BHAT ]</span>
           </div>
         </div>
       </div>
