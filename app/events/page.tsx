@@ -202,7 +202,7 @@ export default function EventsPage() {
               [ GITHUB ]
             </Link>
             <span className="text-gray-600 hidden md:inline">|</span>
-            <span className="text-amber-500/70">[ CONTRIBUTED BY ROCKSTAR-2006 ]</span>
+            <span className="text-amber-500/70">[ Shreekiran Bhat ]</span>
           </div>
         </div>
       </div>
