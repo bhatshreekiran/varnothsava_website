@@ -3,18 +3,20 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import * as THREE from 'three'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 export default function GalleryPage() {
   const containerRef = useRef<HTMLDivElement>(null)
   const sceneRef = useRef<THREE.Scene | null>(null)
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null)
+  const controlsRef = useRef<OrbitControls | null>(null)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     if (!containerRef.current) return
 
-    // Scene setup
+    // 1. Scene setup
     const scene = new THREE.Scene()
     sceneRef.current = scene
 
@@ -24,53 +26,42 @@ export default function GalleryPage() {
       0.1,
       1000
     )
-    camera.position.z = 2.5
+    camera.position.z = 4.5
     cameraRef.current = camera
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight)
+    renderer.setPixelRatio(window.devicePixelRatio)
     renderer.setClearColor(0x000000, 1)
     containerRef.current.appendChild(renderer.domElement)
     rendererRef.current = renderer
 
-    // Add lighting
-    const light1 = new THREE.DirectionalLight(0xffffff, 0.8)
-    light1.position.set(5, 3, 5)
-    scene.add(light1)
+    // 2. Interaction
+    const controls = new OrbitControls(camera, renderer.domElement)
+    controls.enableDamping = true
+    controls.autoRotate = true
+    controls.autoRotateSpeed = 0.6
+    controlsRef.current = controls
 
-    const light2 = new THREE.DirectionalLight(0xD4A574, 0.4)
-    light2.position.set(-5, -3, -5)
-    scene.add(light2)
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3)
+    // 3. Bright Lights (Added just in case, though BasicMaterial ignores them)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2)
     scene.add(ambientLight)
 
-    // Create globe placeholder
-    const geometry = new THREE.IcosahedronGeometry(1, 32)
+    // 4. Create globe with high-visibility material
+    const geometry = new THREE.IcosahedronGeometry(2, 32)
+    // MeshBasicMaterial ensures the images stay bright and are not affected by shadows
     const globe = new THREE.Mesh(
       geometry,
-      new THREE.MeshPhongMaterial({ color: 0x111111, transparent: true, opacity: 0.5 })
+      new THREE.MeshBasicMaterial({ color: 0xffffff })
     )
     scene.add(globe)
 
-    // Animation loop
-    let animationId: number
-    const animate = () => {
-      animationId = requestAnimationFrame(animate)
-      globe.rotation.x += 0.0002
-      globe.rotation.y += 0.0005
-      renderer.render(scene, camera)
-    }
-    animate()
-
-    // Event data for images
+    // --- YOUR PICTURE DATA ---
     const eventsData = [
-      { name: 'AI SUMMIT', x: 256, y: 256, color: '#D4A574', size: 120, img: '/events/neural-interface.jpg' },
-      { name: 'TECH EXPO', x: 512, y: 512, color: '#E97132', size: 100, img: '/events/quantum-computing.jpg' },
-      { name: 'METAVERSE', x: 1024, y: 256, color: '#D4A574', size: 110, img: '/events/metaverse.jpg' },
-      { name: 'BLOCKCHAIN', x: 1536, y: 512, color: '#D97706', size: 100, img: '/events/blockchain.jpg' },
-      { name: 'SECURITY', x: 768, y: 768, color: '#E97132', size: 90, img: '/events/cybersecurity.jpg' },
-      { name: 'DIGITAL ART', x: 1280, y: 800, color: '#D4A574', size: 100, img: '/events/digital-art-nft.jpg' }
+      { name: 'EVENT 01', x: 400, y: 300, color: '#D4A574', size: 160, img: '/events/1.webp' },
+      { name: 'EVENT 02', x: 1200, y: 350, color: '#E97132', size: 160, img: '/events/2.webp' },
+      { name: 'EVENT 03', x: 600, y: 750, color: '#D4A574', size: 160, img: '/events/3.webp' },
+      { name: 'EVENT 04', x: 1600, y: 700, color: '#D97706', size: 160, img: '/events/4.webp' }
     ]
 
     const loadImagesAndDraw = async () => {
@@ -80,167 +71,138 @@ export default function GalleryPage() {
       const ctx = canvas.getContext('2d')
       if (!ctx) return
 
-      // Create background
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
-      gradient.addColorStop(0, '#0a0a0a')
-      gradient.addColorStop(0.5, '#1a1a2e')
-      gradient.addColorStop(1, '#0a0a0a')
-      ctx.fillStyle = gradient
+      // Background - Deep charcoal instead of pure black for better contrast
+      ctx.fillStyle = '#0a0a0a'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-      // Draw grid
+      // Cyber Grid
       ctx.strokeStyle = '#D4A574'
-      ctx.lineWidth = 0.5
-      ctx.globalAlpha = 0.1
-      for (let i = 0; i < canvas.width; i += 50) {
+      ctx.lineWidth = 2
+      ctx.globalAlpha = 0.15
+      for (let i = 0; i < canvas.width; i += 128) {
         ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
       }
-      for (let i = 0; i < canvas.height; i += 50) {
+      for (let i = 0; i < canvas.height; i += 128) {
         ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
       }
       ctx.globalAlpha = 1
 
-      // Load and draw icons
+      // Draw your images
       for (const event of eventsData) {
-        try {
-          const img = new Image()
-          img.src = event.img
-          await new Promise((resolve) => {
-            img.onload = resolve
-            img.onerror = resolve
-          })
+        const img = new Image()
+        img.src = event.img
+        
+        await new Promise((resolve) => {
+          img.onload = () => {
+            ctx.save()
+            
+            // Add slight brightness boost to the image pixels
+            ctx.filter = 'brightness(1.1) contrast(1.1)'
 
-          ctx.save()
-          const radial = ctx.createRadialGradient(event.x, event.y, event.size, event.x, event.y, event.size + 40)
-          radial.addColorStop(0, event.color + '44')
-          radial.addColorStop(1, 'transparent')
-          ctx.fillStyle = radial
-          ctx.beginPath()
-          ctx.arc(event.x, event.y, event.size + 40, 0, Math.PI * 2)
-          ctx.fill()
+            // Draw Glow behind image
+            ctx.shadowBlur = 50
+            ctx.shadowColor = event.color
+            ctx.fillStyle = event.color
+            ctx.beginPath()
+            ctx.arc(event.x, event.y, event.size + 5, 0, Math.PI * 2)
+            ctx.fill()
+            
+            // Circle Crop
+            ctx.beginPath()
+            ctx.arc(event.x, event.y, event.size, 0, Math.PI * 2)
+            ctx.clip()
+            ctx.drawImage(img, event.x - event.size, event.y - event.size, event.size * 2, event.size * 2)
+            ctx.restore()
 
-          ctx.beginPath()
-          ctx.arc(event.x, event.y, event.size, 0, Math.PI * 2)
-          ctx.clip()
-          ctx.filter = 'contrast(1.2) grayscale(0.5)'
-          ctx.drawImage(img, event.x - event.size, event.y - event.size, event.size * 2, event.size * 2)
-          ctx.fillStyle = event.color
-          ctx.globalAlpha = 0.2
-          ctx.fillRect(event.x - event.size, event.y - event.size, event.size * 2, event.size * 2)
-          ctx.globalAlpha = 1
-          ctx.restore()
-
-          ctx.strokeStyle = event.color
-          ctx.lineWidth = 4
-          ctx.beginPath()
-          ctx.arc(event.x, event.y, event.size, 0, Math.PI * 2)
-          ctx.stroke()
-
-          ctx.fillStyle = '#ffffff'
-          ctx.font = 'bold 32px monospace'
-          ctx.textAlign = 'center'
-          ctx.textBaseline = 'middle'
-          ctx.fillText(event.name, event.x, event.y + event.size + 45)
-        } catch (e) {
-          console.error('Failed to load', event.img)
-        }
+            // Thick neon border
+            ctx.strokeStyle = event.color
+            ctx.lineWidth = 10
+            ctx.beginPath()
+            ctx.arc(event.x, event.y, event.size, 0, Math.PI * 2)
+            ctx.stroke()
+            
+            // Bold Text
+            ctx.fillStyle = 'white'
+            ctx.font = 'bold 50px Arial'
+            ctx.textAlign = 'center'
+            ctx.fillText(event.name, event.x, event.y + event.size + 80)
+            
+            resolve(true)
+          }
+          img.onerror = resolve 
+        })
       }
 
       const texture = new THREE.CanvasTexture(canvas)
-      globe.material = new THREE.MeshPhongMaterial({
-        map: texture,
-        emissive: 0x333333,
-        shininess: 20,
-        transparent: true
-      })
+      texture.colorSpace = THREE.SRGBColorSpace // Ensures colors look correct in modern Three.js
+      globe.material.map = texture
+      globe.material.needsUpdate = true
       setMounted(true)
     }
 
     loadImagesAndDraw()
 
-    // Handle resize
+    let animationId: number
+    const animate = () => {
+      animationId = requestAnimationFrame(animate)
+      if (controlsRef.current) controlsRef.current.update()
+      renderer.render(scene, camera)
+    }
+    animate()
+
     const handleResize = () => {
       if (!containerRef.current) return
-      const width = containerRef.current.clientWidth
-      const height = containerRef.current.clientHeight
-      camera.aspect = width / height
+      camera.aspect = containerRef.current.clientWidth / containerRef.current.clientHeight
       camera.updateProjectionMatrix()
-      renderer.setSize(width, height)
+      renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight)
     }
 
     window.addEventListener('resize', handleResize)
-
     return () => {
       window.removeEventListener('resize', handleResize)
       cancelAnimationFrame(animationId)
       renderer.dispose()
-      if (containerRef.current) {
-        containerRef.current.removeChild(renderer.domElement)
-      }
+      if (containerRef.current) containerRef.current.removeChild(renderer.domElement)
     }
   }, [])
 
   return (
-    <main className="min-h-screen bg-black">
+    <main className="min-h-screen bg-black overflow-hidden relative text-white">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 border-b border-amber-700/20 backdrop-blur-md bg-black/50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-2 h-2 bg-amber-600 animate-pulse" />
-            <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500 tracking-wider">
+      <nav className="fixed top-0 w-full z-[100] border-b border-amber-700/20 backdrop-blur-xl bg-black/80">
+        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-amber-600 animate-pulse rounded-full" />
+            <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500 tracking-tighter uppercase">
               VARNOTHSAVA
             </h1>
           </Link>
-          <div className="flex items-center gap-8">
-            <Link href="/events" className="text-sm text-gray-300 hover:text-amber-500 transition-colors font-mono">
-              EVENTS
-            </Link>
-            <Link href="/gallery" className="text-sm text-amber-500 font-mono">
-              GALLERY
-            </Link>
+          <div className="flex items-center gap-10">
+            <Link href="/events" className="text-xs font-mono text-gray-400 hover:text-amber-500 uppercase tracking-widest">[ Events ]</Link>
+            <Link href="/gallery" className="text-xs font-mono text-amber-500 border-b border-amber-500/50 pb-1 uppercase tracking-widest">[ Gallery ]</Link>
           </div>
         </div>
       </nav>
 
-      {/* 3D Globe Container */}
-      <div className="pt-20 w-full h-screen flex flex-col items-center justify-center">
-        <div ref={containerRef} className="w-full h-4/5 relative">
-          {!mounted && (
-            <div className="absolute inset-0 flex items-center justify-center text-amber-500 font-mono animate-pulse">
-              INITIALIZING 3D INTERFACE...
-            </div>
-          )}
-        </div>
+      {/* 3D Viewport */}
+      <div className="relative w-full h-screen z-10 flex flex-col items-center justify-center cursor-grab active:cursor-grabbing">
+        <div ref={containerRef} className="w-full h-full absolute inset-0" />
+        
+        {!mounted && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black text-amber-500 font-mono">
+             <div className="w-12 h-12 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mb-4" />
+             <p className="animate-pulse tracking-[0.3em]">ILLUMINATING GALLERY...</p>
+          </div>
+        )}
 
-        <div className="text-center py-8 px-4 font-mono">
-          <h2 className="text-3xl font-black text-white mb-2 tracking-tighter">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">
-              EVENT SHOWCASE
-            </span>
+        {/* Text Overlay */}
+        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center pointer-events-none z-30">
+          <h2 className="text-5xl font-black tracking-tighter uppercase italic text-white drop-shadow-2xl">
+            Event Showcase
           </h2>
-          <p className="text-gray-400 text-sm tracking-wide">[ INTERACTIVE 3D GALLERY ]</p>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="fixed bottom-0 w-full z-40 border-t border-amber-700/20 backdrop-blur-md bg-black/50 py-6 px-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4 font-mono text-xs text-gray-500">
-            <span>[ GALLERY ]</span>
-            <span className="text-amber-600 animate-pulse">●</span>
-            <span>ROTATE TO EXPLORE</span>
-          </div>
-          <div className="flex items-center gap-6 text-xs text-gray-500 font-mono">
-            <Link
-              href="https://github.com/bhatshreekiran/varnothsava_website"
-              target="_blank"
-              className="text-amber-500 hover:text-amber-400 transition-colors"
-            >
-              [ GITHUB ]
-            </Link>
-            <span className="text-gray-600 hidden md:inline">|</span>
-            <span className="text-amber-500/70">[ CONTRIBUTED BY ROCKSTAR-2006 ]</span>
-          </div>
+          <p className="text-amber-500 font-mono text-[10px] mt-4 uppercase tracking-[0.6em] bg-black/40 py-1 px-4 inline-block">
+            Interact to Explore
+          </p>
         </div>
       </div>
     </main>

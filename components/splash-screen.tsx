@@ -65,7 +65,7 @@ export default function SplashScreen() {
             VARNOTH
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600">
-              GAVA
+              SAVA
             </span>
           </h1>
           <p className="text-gray-400 text-sm md:text-base font-mono uppercase tracking-widest">
