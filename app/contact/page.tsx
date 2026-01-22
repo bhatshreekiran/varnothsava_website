@@ -224,8 +224,15 @@ export default function ContactPage() {
             <span className="text-amber-600 animate-pulse">●</span>
             <span>VARNOTH-GAVA 2026</span>
           </div>
-          <div className="text-xs text-gray-500 font-mono">
-            <span className="text-amber-500">[ v2.1.0 ]</span>
+          <div className="flex items-center gap-6 text-xs text-gray-500 font-mono">
+            <Link
+              href="https://github.com/bhatshreekiran/varnothsava_website"
+              target="_blank"
+              className="text-amber-500 hover:text-amber-400 transition-colors"
+            >
+              [ GITHUB ]
+            </Link>
+            <span className="text-amber-500 opacity-50">[ VARNOTHSAVA 2026 ]</span>
           </div>
         </div>
       </div>

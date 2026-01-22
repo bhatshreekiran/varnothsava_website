@@ -92,18 +92,21 @@ export default function EventsPage() {
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 border-b border-amber-700/20 backdrop-blur-md bg-black/50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <div className="w-2 h-2 bg-amber-600 animate-pulse" />
             <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500 tracking-wider">
-              VARNOTH-GAVA
+              VARNOTHSAVA
             </h1>
-          </div>
+          </Link>
           <div className="flex items-center gap-8">
             <Link href="/" className="text-sm text-gray-300 hover:text-amber-500 transition-colors font-mono">
               HOME
             </Link>
             <Link href="/events" className="text-sm text-amber-500 font-mono">
               EVENTS
+            </Link>
+            <Link href="/gallery" className="text-sm text-gray-300 hover:text-amber-500 transition-colors font-mono">
+              GALLERY
             </Link>
             <Link href="/register" className="px-4 py-2 border border-amber-700 text-amber-500 hover:bg-amber-600/10 transition-all font-mono text-sm tracking-wider rounded-sm">
               REGISTER
@@ -153,11 +156,10 @@ export default function EventsPage() {
                 <button
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
-                  className={`px-6 py-3 rounded-sm font-mono text-sm tracking-wider whitespace-nowrap transition-all ${
-                    selectedCategory === category.id
+                  className={`px-6 py-3 rounded-sm font-mono text-sm tracking-wider whitespace-nowrap transition-all ${selectedCategory === category.id
                       ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-black font-bold'
                       : 'border border-amber-700/30 text-gray-300 hover:border-amber-700/100 hover:text-amber-500'
-                  }`}
+                    }`}
                 >
                   {category.label}
                   <span className="ml-2 text-xs opacity-60">[{category.count}]</span>
@@ -191,8 +193,16 @@ export default function EventsPage() {
             <span className="text-amber-600 animate-pulse">●</span>
             <span>DISPLAYING {filteredEvents.length} OF {events.length} EVENTS</span>
           </div>
-          <div className="text-xs text-gray-500 font-mono">
-            <span className="text-amber-500">[ UPDATED: 2026-05-20 ]</span>
+          <div className="flex items-center gap-6 text-xs text-gray-500 font-mono">
+            <Link
+              href="https://github.com/bhatshreekiran/varnothsava_website"
+              target="_blank"
+              className="text-amber-500 hover:text-amber-400 transition-colors"
+            >
+              [ GITHUB ]
+            </Link>
+            <span className="text-gray-600 hidden md:inline">|</span>
+            <span className="text-amber-500/70">[ CONTRIBUTED BY ROCKSTAR-2006 ]</span>
           </div>
         </div>
       </div>
